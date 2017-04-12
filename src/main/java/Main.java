@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class Main {
 
     private static final String DB = "jdbc:mysql://5.135.218.27:3306/lukaszKolacz?useUnicode=true&characterEncoding=UTF-8";
-    private static final String USER = "oskar";
+    private static final String USER = "lukaszKolacz";
     private static final String USERPW = "akademiakodu";
     private static final String DRIVER = "com.mysql.jdbc.Driver";
 
@@ -45,8 +45,10 @@ public class Main {
 
                         System.out.println("Podaj Nazwisko: ");
                         String lastName1 = scanner.next();
+
 //                    Numer telefonu nie może miec spacji! Sprawdź jak to ominąć ?! REGEX?
                         System.out.println("Podaj numer telefonu: ");
+                        System.out.println("<!> NUMER TELEFONU MUSI BYĆ JEDNYM CIĄGIEM ZNAKÓW <!>");
                         String telephoneNumber1 = scanner.next();
 
 
@@ -56,6 +58,17 @@ public class Main {
                         break;
 
                     case 2:
+                        System.out.println("Podaj tytuł: ");
+                        String title = scanner.next();
+
+                        System.out.println("Podaj autora: ");
+                        String author = scanner.next();
+
+                        System.out.println("Podaj ilość stron: ");
+                        int pages = scanner.nextInt();
+
+
+                        addBook(connection, title, author, pages);
 
                         break;
 
@@ -79,6 +92,17 @@ public class Main {
                         break;
 
                     case 5:
+
+                        ResultSet bookResult = statement.executeQuery("SELECT * FROM book");
+                        while (bookResult.next()) {
+                            System.out.println("------------------");
+                            System.out.println("Id: " + bookResult.getString("id"));
+                            System.out.println("Tutuł: " + bookResult.getString("title"));
+                            System.out.println("Autor: " + bookResult.getString("author"));
+                            System.out.println("Ilość stron: " + bookResult.getInt("pages"));
+                            System.out.println("------------------");
+                        }
+                        bookResult.close();
 
                         break;
 
@@ -129,7 +153,22 @@ public class Main {
 
         statement.close();
 
-        System.out.println("Dodałem użytkownika!");
+        System.out.println("Dodano użytkownika!");
+    }
+
+    public static void addBook(Connection connection, String title, String author, int pages) throws SQLException {
+
+        String sql = "INSERT INTO book(title, author, pages) VALUES(?, ?, ?)";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, title);
+        statement.setString(2, author);
+        statement.setInt(3, pages);
+
+        statement.execute();
+
+        statement.close();
+
+        System.out.println("Dodano książkę!");
     }
 
 }

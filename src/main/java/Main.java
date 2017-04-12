@@ -6,6 +6,11 @@ import java.util.Scanner;
 /**
  * Created by Lukasz Kolacz on 10.04.2017.
  */
+
+
+// TODO: Relacje baz danych wiele do wielu!
+
+
 public class Main {
 
     private static final String DB = "jdbc:mysql://5.135.218.27:3306/lukaszKolacz?useUnicode=true&characterEncoding=UTF-8";
@@ -31,6 +36,8 @@ public class Main {
         do {
             menu();
             int numb = scanner.nextInt();
+
+//            TODO: PRZENIESC TA CZESC KODU DO LACZENIA DO OSOBNEJ METODY (najlepiej statycznej)
 
             try {
                 Connection connection = (Connection) DriverManager.getConnection(DB, USER, USERPW);

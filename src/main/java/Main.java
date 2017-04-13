@@ -8,7 +8,7 @@ import java.util.Scanner;
  */
 
 
-// TODO: Relacje baz danych wiele do wielu!
+// TODO: OBSŁUŻYĆ PARAMETR END RENT TIME
 
 
 public class Main {
@@ -37,7 +37,7 @@ public class Main {
             menu();
             int numb = scanner.nextInt();
 
-//            TODO: PRZENIESC TA CZESC KODU DO LACZENIA DO OSOBNEJ METODY (najlepiej statycznej)
+// TODO: PRZENIESC TA CZESC KODU DO LACZENIA DO OSOBNEJ METODY (najlepiej statycznej)
 
             try {
                 Connection connection = (Connection) DriverManager.getConnection(DB, USER, USERPW);
@@ -80,6 +80,17 @@ public class Main {
                         break;
 
                     case 3:
+                        System.out.println("Podaj id książki");
+                        int book = scanner.nextInt();
+
+                        System.out.println("Podaj id użytkownika");
+                        int user = scanner.nextInt();
+
+                        System.out.println("Podaj czas wypożyczenia (w dniach)");
+                        int rentTime = scanner.nextInt();
+
+
+                        addRent(connection, book, user, rentTime);
 
                         break;
 
@@ -87,12 +98,12 @@ public class Main {
 
                         ResultSet resultSet = statement.executeQuery("SELECT * FROM user");
                         while (resultSet.next()) {
-                            System.out.println("------------------");
+                            System.out.println("---------------------------------------");
                             System.out.println("Id: " + resultSet.getString("id"));
                             System.out.println("Imię: " + resultSet.getString("name"));
                             System.out.println("Nazwisko: " + resultSet.getString("lastname"));
                             System.out.println("Numer telefonu: " + resultSet.getString("number"));
-                            System.out.println("------------------");
+                            System.out.println("---------------------------------------");
                         }
                         resultSet.close();
 
@@ -102,18 +113,38 @@ public class Main {
 
                         ResultSet bookResult = statement.executeQuery("SELECT * FROM book");
                         while (bookResult.next()) {
-                            System.out.println("------------------");
+                            System.out.println("---------------------------------------");
                             System.out.println("Id: " + bookResult.getString("id"));
                             System.out.println("Tutuł: " + bookResult.getString("title"));
                             System.out.println("Autor: " + bookResult.getString("author"));
                             System.out.println("Ilość stron: " + bookResult.getInt("pages"));
-                            System.out.println("------------------");
+                            System.out.println("---------------------------------------");
                         }
                         bookResult.close();
 
                         break;
 
                     case 6:
+
+                        ResultSet rentResult = statement.executeQuery("SELECT * FROM rent");
+                        while (rentResult.next()) {
+                            System.out.println("---------------------------------------");
+                            System.out.println("Id: " + rentResult.getString("id"));
+                            System.out.println("Id książki: " + rentResult.getString("book"));
+                            System.out.println("Id użytkownika: " + rentResult.getString("user"));
+                            System.out.println("Data wypożyczenia: " + rentResult.getDate("startRent"));
+                            System.out.println("Dokładny czas wypożyczenia: " + rentResult.getTime("startRent"));
+
+                            if(rentResult.getInt("endRent")== 0){
+                                System.out.println("Książka w trakcie wypożyczenia");
+                            }else {
+                                System.out.println("Data oddania: " + rentResult.getInt("endRent"));
+                            }
+
+                            System.out.println("Czas wypożyczeni (w dniach): " + rentResult.getInt("rentTime"));
+                            System.out.println("---------------------------------------");
+                        }
+                        rentResult.close();
 
                         break;
 
@@ -148,7 +179,22 @@ public class Main {
 
     }
 
-    public static void addUser(Connection connection, String name, String lastName, String telephoneNumber) throws SQLException {
+    private static  void  addRent(Connection connection, int book, int user, int rentTime) throws SQLException{
+        String sgl = "INSERT INTO rent(book, user, rentTime) VALUES(?, ?, ?)";
+        PreparedStatement statement = connection.prepareStatement(sgl);
+        statement.setInt(1, book);
+        statement.setInt(2, user);
+        statement.setInt(3, rentTime);
+
+
+        statement.execute();
+
+        statement.close();
+
+        System.out.println("Dodano wypożyczenie!");
+    }
+
+    private static void addUser(Connection connection, String name, String lastName, String telephoneNumber) throws SQLException {
 
         String sql = "INSERT INTO user(name, lastname, number) VALUES(?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -163,7 +209,7 @@ public class Main {
         System.out.println("Dodano użytkownika!");
     }
 
-    public static void addBook(Connection connection, String title, String author, int pages) throws SQLException {
+    private static void addBook(Connection connection, String title, String author, int pages) throws SQLException {
 
         String sql = "INSERT INTO book(title, author, pages) VALUES(?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(sql);

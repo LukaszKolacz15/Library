@@ -53,7 +53,20 @@ public class Main {
                         System.out.println("Podaj Nazwisko: ");
                         String lastName1 = scanner.next();
 
-//                    Numer telefonu nie może miec spacji! Sprawdź jak to ominąć ?! REGEX?
+// TODO: Numer telefonu nie może miec spacji! Sprawdź jak to ominąć ?! REGEX?
+                        
+//        Pattern bigChars = Pattern.compile(".*[A-Z].*");
+//        Pattern specjalChars = Pattern.compile(".*[\\W].*");
+//        Pattern intchar = Pattern.compile(".*[\\d].*");
+//
+//        Matcher matcherBig = bigChars.matcher("Aasd48as%dsd");
+//        Matcher matcherSpecial = specjalChars.matcher("Aasd48as%dsd");
+//        Matcher matcherInt = intchar.matcher("Aasd48as%dsd");
+
+//        if(matcherBig.matches() && matcherSpecial.matches() && matcherInt.matches()){
+//            System.out.println("Hasło jest poprawne");
+//        }
+
                         System.out.println("Podaj numer telefonu: ");
                         System.out.println("<!> NUMER TELEFONU MUSI BYĆ JEDNYM CIĄGIEM ZNAKÓW <!>");
                         String telephoneNumber1 = scanner.next();

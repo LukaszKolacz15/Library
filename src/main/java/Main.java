@@ -82,7 +82,7 @@ public class Main {
 
                     case 2:
 // TODO: Tytuł oraz autor nie może miec spacji! Sprawdź jak to ominąć ?! REGEX?
-// TODO: Rozdzielić autora na imię i nazwisko ?? 
+// TODO: Rozdzielić autora na imię i nazwisko ??
 
 
 

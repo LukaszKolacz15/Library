@@ -1,6 +1,7 @@
 import com.mysql.jdbc.Connection;
 
 import java.sql.*;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -17,6 +18,8 @@ public class Main {
     private static final String USER = "lukaszKolacz";
     private static final String USERPW = "akademiakodu";
     private static final String DRIVER = "com.mysql.jdbc.Driver";
+
+    private static String title = "0";
 
     public static void main(String[] args) {
 
@@ -54,7 +57,7 @@ public class Main {
                         String lastName1 = scanner.next();
 
 // TODO: Numer telefonu nie może miec spacji! Sprawdź jak to ominąć ?! REGEX?
-                        
+
 //        Pattern bigChars = Pattern.compile(".*[A-Z].*");
 //        Pattern specjalChars = Pattern.compile(".*[\\W].*");
 //        Pattern intchar = Pattern.compile(".*[\\d].*");
@@ -78,8 +81,17 @@ public class Main {
                         break;
 
                     case 2:
+// TODO: Tytuł oraz autor nie może miec spacji! Sprawdź jak to ominąć ?! REGEX?
+// TODO: Rozdzielić autora na imię i nazwisko ?? 
+
+
+
                         System.out.println("Podaj tytuł: ");
+//                        try{
                         String title = scanner.next();
+//                        }catch (InputMismatchException e){
+//                            System.out.println("<!> Tytuł musi zostać podany bez spacji <!>");
+//                        }
 
                         System.out.println("Podaj autora: ");
                         String author = scanner.next();
@@ -148,9 +160,9 @@ public class Main {
                             System.out.println("Data wypożyczenia: " + rentResult.getDate("startRent"));
                             System.out.println("Dokładny czas wypożyczenia: " + rentResult.getTime("startRent"));
 
-                            if(rentResult.getInt("endRent")== 0){
+                            if (rentResult.getInt("endRent") == 0) {
                                 System.out.println("Książka w trakcie wypożyczenia");
-                            }else {
+                            } else {
                                 System.out.println("Data oddania: " + rentResult.getInt("endRent"));
                             }
 
@@ -192,7 +204,7 @@ public class Main {
 
     }
 
-    private static  void  addRent(Connection connection, int book, int user, int rentTime) throws SQLException{
+    private static void addRent(Connection connection, int book, int user, int rentTime) throws SQLException {
         String sgl = "INSERT INTO rent(book, user, rentTime) VALUES(?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(sgl);
         statement.setInt(1, book);

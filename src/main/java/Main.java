@@ -3,6 +3,8 @@ import com.mysql.jdbc.Connection;
 import java.sql.*;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Lukasz Kolacz on 10.04.2017.
@@ -50,40 +52,19 @@ public class Main {
                 switch (numb) {
                     case 1:
 
-                        System.out.println("Podaj Imię: ");
-                        String name1 = scanner.next();
-
-                        System.out.println("Podaj Nazwisko: ");
-                        String lastName1 = scanner.next();
-
 // TODO: Numer telefonu nie może miec spacji! Sprawdź jak to ominąć ?! REGEX?
 
-//        Pattern bigChars = Pattern.compile(".*[A-Z].*");
-//        Pattern specjalChars = Pattern.compile(".*[\\W].*");
-//        Pattern intchar = Pattern.compile(".*[\\d].*");
-//
-//        Matcher matcherBig = bigChars.matcher("Aasd48as%dsd");
-//        Matcher matcherSpecial = specjalChars.matcher("Aasd48as%dsd");
-//        Matcher matcherInt = intchar.matcher("Aasd48as%dsd");
+//                        addUser(connection, "Łukasz", "Kołacz", "643 132 646");
 
-//        if(matcherBig.matches() && matcherSpecial.matches() && matcherInt.matches()){
-//            System.out.println("Hasło jest poprawne");
-//        }
+//                        Wywołanie innego podejścia, z tablicą stringów:
+                        addUser(connection);
 
-                        System.out.println("Podaj numer telefonu: ");
-                        System.out.println("<!> NUMER TELEFONU MUSI BYĆ JEDNYM CIĄGIEM ZNAKÓW <!>");
-                        String telephoneNumber1 = scanner.next();
-
-
-//                        addUser(connection, "Łukasz","Kołacz", "643 132 646");
-                        addUser(connection, name1, lastName1, telephoneNumber1);
 
                         break;
 
                     case 2:
 // TODO: Tytuł oraz autor nie może miec spacji! Sprawdź jak to ominąć ?! REGEX?
 // TODO: Rozdzielić autora na imię i nazwisko ??
-
 
 
                         System.out.println("Podaj tytuł: ");
@@ -219,20 +200,75 @@ public class Main {
         System.out.println("Dodano wypożyczenie!");
     }
 
-    private static void addUser(Connection connection, String name, String lastName, String telephoneNumber) throws SQLException {
+
+//         Stare podejście z problemem gdy w nr telefonu jest spacja!
+
+    private static void addUser(Connection connection) throws SQLException {
+
+
+        Scanner scanner = new Scanner(System.in);
+
+
+        System.out.println("Podaj Imię: ");
+        String name = scanner.next();
+
+        System.out.println("Podaj Nazwisko: ");
+        String lastName = scanner.next();
+
+
+//                                         Mój regex
+        String telephoneNumber = " ";
+        Boolean status;
+        do {
+            System.out.println("Podaj numer telefonu: ");
+            telephoneNumber = scanner.next();
+
+            Pattern tele = Pattern.compile(".{9,}");
+            Matcher telephone = tele.matcher(telephoneNumber);
+            if (telephone.matches()) {
+                status = true;
+            }else {
+                System.out.println("<!> NUMER TELEFONU MUSI BYĆ JEDNYM CIĄGIEM ZNAKÓW ORAZ SKŁADAĆ SIĘ Z CONAJMNIEJ DZIEWIĘCIU ZNAKÓW<!>");
+                status = false;
+            }
+        }while (status == false);
 
         String sql = "INSERT INTO user(name, lastname, number) VALUES(?, ?, ?)";
+
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setString(1, name);
         statement.setString(2, lastName);
         statement.setString(3, telephoneNumber);
-
         statement.execute();
 
         statement.close();
 
         System.out.println("Dodano użytkownika!");
     }
+
+
+//    Inne podejście metoda addUser pracuje na tablicy Stringów, eliminuje to problem ze spacją!!
+
+//    private static void addUser(Connection connection) throws SQLException {
+//
+//        String sql = "INSERT INTO user(name, lastname, number) VALUES(?, ?, ?)";
+//
+//        PreparedStatement statement = connection.prepareStatement(sql);
+//
+//        Scanner scanner = new Scanner(System.in);
+//        System.out.println("Wpisz imię,nazwisko,numer telefonu (po przecinku)");
+//        String[] userData = scanner.nextLine().split(",");
+//
+//        statement.setString(1, userData[0]);
+//        statement.setString(2, userData[1]);
+//        statement.setString(3, userData[2]);
+//
+//        statement.execute();
+//
+//        statement.close();
+//
+//        System.out.println("Dodano użytkownika!");
+//    }
 
     private static void addBook(Connection connection, String title, String author, int pages) throws SQLException {
 

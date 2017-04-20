@@ -1,7 +1,6 @@
 import com.mysql.jdbc.Connection;
 
 import java.sql.*;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,7 +20,6 @@ public class Main {
     private static final String USERPW = "akademiakodu";
     private static final String DRIVER = "com.mysql.jdbc.Driver";
 
-    private static String title = "0";
 
     public static void main(String[] args) {
 
@@ -52,105 +50,37 @@ public class Main {
                 switch (numb) {
                     case 1:
 
-// TODO: Numer telefonu nie może miec spacji! Sprawdź jak to ominąć ?! REGEX?
-
-//                        addUser(connection, "Łukasz", "Kołacz", "643 132 646");
-
-//                        Wywołanie innego podejścia, z tablicą stringów:
                         addUser(connection);
-
 
                         break;
 
                     case 2:
-// TODO: Tytuł oraz autor nie może miec spacji! Sprawdź jak to ominąć ?! REGEX?
-// TODO: Rozdzielić autora na imię i nazwisko ??
 
-
-                        System.out.println("Podaj tytuł: ");
-//                        try{
-                        String title = scanner.next();
-//                        }catch (InputMismatchException e){
-//                            System.out.println("<!> Tytuł musi zostać podany bez spacji <!>");
-//                        }
-
-                        System.out.println("Podaj autora: ");
-                        String author = scanner.next();
-
-                        System.out.println("Podaj ilość stron: ");
-                        int pages = scanner.nextInt();
-
-
-                        addBook(connection, title, author, pages);
+                        addBook(connection);
 
                         break;
 
                     case 3:
-                        System.out.println("Podaj id książki");
-                        int book = scanner.nextInt();
 
-                        System.out.println("Podaj id użytkownika");
-                        int user = scanner.nextInt();
-
-                        System.out.println("Podaj czas wypożyczenia (w dniach)");
-                        int rentTime = scanner.nextInt();
-
-
-                        addRent(connection, book, user, rentTime);
+                        addRent(connection);
 
                         break;
 
                     case 4:
 
-                        ResultSet resultSet = statement.executeQuery("SELECT * FROM user");
-                        while (resultSet.next()) {
-                            System.out.println("---------------------------------------");
-                            System.out.println("Id: " + resultSet.getString("id"));
-                            System.out.println("Imię: " + resultSet.getString("name"));
-                            System.out.println("Nazwisko: " + resultSet.getString("lastname"));
-                            System.out.println("Numer telefonu: " + resultSet.getString("number"));
-                            System.out.println("---------------------------------------");
-                        }
-                        resultSet.close();
+                        showUsers(connection);
 
                         break;
 
                     case 5:
 
-                        ResultSet bookResult = statement.executeQuery("SELECT * FROM book");
-                        while (bookResult.next()) {
-                            System.out.println("---------------------------------------");
-                            System.out.println("Id: " + bookResult.getString("id"));
-                            System.out.println("Tutuł: " + bookResult.getString("title"));
-                            System.out.println("Autor: " + bookResult.getString("author"));
-                            System.out.println("Ilość stron: " + bookResult.getInt("pages"));
-                            System.out.println("---------------------------------------");
-                        }
-                        bookResult.close();
+                        showBooks(connection);
 
                         break;
 
                     case 6:
 
-                        ResultSet rentResult = statement.executeQuery("SELECT * FROM rent");
-                        while (rentResult.next()) {
-                            System.out.println("---------------------------------------");
-                            System.out.println("Id: " + rentResult.getString("id"));
-                            System.out.println("Id książki: " + rentResult.getString("book"));
-                            System.out.println("Id użytkownika: " + rentResult.getString("user"));
-                            System.out.println("Data wypożyczenia: " + rentResult.getDate("startRent"));
-                            System.out.println("Dokładny czas wypożyczenia: " + rentResult.getTime("startRent"));
-
-                            if (rentResult.getInt("endRent") == 0) {
-                                System.out.println("Książka w trakcie wypożyczenia");
-                            } else {
-                                System.out.println("Data oddania: " + rentResult.getInt("endRent"));
-                            }
-
-                            System.out.println("Czas wypożyczeni (w dniach): " + rentResult.getInt("rentTime"));
-                            System.out.println("---------------------------------------");
-                        }
-                        rentResult.close();
+                        showRents(connection);
 
                         break;
 
@@ -185,104 +115,150 @@ public class Main {
 
     }
 
-    private static void addRent(Connection connection, int book, int user, int rentTime) throws SQLException {
+
+    private static void addRent(Connection connection) throws SQLException {
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Podaj id książki");
+        int book = scanner.nextInt();
+
+        System.out.println("Podaj id użytkownika");
+        int user = scanner.nextInt();
+
+        System.out.println("Podaj czas wypożyczenia (w dniach)");
+        int rentTime = scanner.nextInt();
+
         String sgl = "INSERT INTO rent(book, user, rentTime) VALUES(?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(sgl);
         statement.setInt(1, book);
         statement.setInt(2, user);
         statement.setInt(3, rentTime);
-
-
         statement.execute();
-
         statement.close();
 
         System.out.println("Dodano wypożyczenie!");
     }
 
 
-//         Stare podejście z problemem gdy w nr telefonu jest spacja!
-
     private static void addUser(Connection connection) throws SQLException {
 
+//        addUser(connection, "Łukasz", "Kołacz", "643 132 646");
 
         Scanner scanner = new Scanner(System.in);
-
-
         System.out.println("Podaj Imię: ");
-        String name = scanner.next();
-
+        String name = scanner.nextLine();
         System.out.println("Podaj Nazwisko: ");
-        String lastName = scanner.next();
+        String lastName = scanner.nextLine();
 
-
-//                                         Mój regex
-        String telephoneNumber = " ";
+        String telephoneNumber = "";
         Boolean status;
         do {
             System.out.println("Podaj numer telefonu: ");
-            telephoneNumber = scanner.next();
+            System.out.println("Przykładowy wzór: +48 000 000 000");
+            telephoneNumber = scanner.nextLine();
 
-            Pattern tele = Pattern.compile(".{9,}");
+            Pattern tele = Pattern.compile("\\+[0-9]{2}(\\ [0-9]{3}){3}");
             Matcher telephone = tele.matcher(telephoneNumber);
             if (telephone.matches()) {
                 status = true;
-            }else {
-                System.out.println("<!> NUMER TELEFONU MUSI BYĆ JEDNYM CIĄGIEM ZNAKÓW ORAZ SKŁADAĆ SIĘ Z CONAJMNIEJ DZIEWIĘCIU ZNAKÓW<!>");
+            } else {
+                System.out.println("<!> NUMER TELEFONU MUSI ZOSTAĆ WPROWADZONY ZGODNIE ZE WZOREM <!>");
                 status = false;
             }
-        }while (status == false);
+        } while (status == false);
 
         String sql = "INSERT INTO user(name, lastname, number) VALUES(?, ?, ?)";
-
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setString(1, name);
         statement.setString(2, lastName);
         statement.setString(3, telephoneNumber);
         statement.execute();
-
         statement.close();
 
         System.out.println("Dodano użytkownika!");
     }
 
 
-//    Inne podejście metoda addUser pracuje na tablicy Stringów, eliminuje to problem ze spacją!!
+    private static void addBook(Connection connection) throws SQLException {
 
-//    private static void addUser(Connection connection) throws SQLException {
-//
-//        String sql = "INSERT INTO user(name, lastname, number) VALUES(?, ?, ?)";
-//
-//        PreparedStatement statement = connection.prepareStatement(sql);
-//
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Wpisz imię,nazwisko,numer telefonu (po przecinku)");
-//        String[] userData = scanner.nextLine().split(",");
-//
-//        statement.setString(1, userData[0]);
-//        statement.setString(2, userData[1]);
-//        statement.setString(3, userData[2]);
-//
-//        statement.execute();
-//
-//        statement.close();
-//
-//        System.out.println("Dodano użytkownika!");
-//    }
+        Scanner scanner = new Scanner(System.in);
 
-    private static void addBook(Connection connection, String title, String author, int pages) throws SQLException {
+        System.out.println("Podaj tytuł: ");
+        String title = scanner.nextLine();
+        System.out.println("Podaj autora: ");
+        String author = scanner.nextLine();
+        System.out.println("Podaj ilość stron: ");
+        int pages = scanner.nextInt();
+
 
         String sql = "INSERT INTO book(title, author, pages) VALUES(?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setString(1, title);
         statement.setString(2, author);
         statement.setInt(3, pages);
-
         statement.execute();
-
         statement.close();
 
         System.out.println("Dodano książkę!");
+    }
+
+    private static void showUsers(Connection connection)throws SQLException{
+
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM user");
+
+        while (resultSet.next()) {
+            System.out.println("---------------------------------------");
+            System.out.println("Id: " + resultSet.getString("id"));
+            System.out.println("Imię: " + resultSet.getString("name"));
+            System.out.println("Nazwisko: " + resultSet.getString("lastname"));
+            System.out.println("Numer telefonu: " + resultSet.getString("number"));
+            System.out.println("---------------------------------------");
+        }
+        resultSet.close();
+
+    }
+
+
+    private static void showBooks(Connection connection)throws SQLException{
+
+        Statement statement = connection.createStatement();
+        ResultSet bookResult = statement.executeQuery("SELECT * FROM book");
+        while (bookResult.next()) {
+            System.out.println("---------------------------------------");
+            System.out.println("Id: " + bookResult.getString("id"));
+            System.out.println("Tutuł: " + bookResult.getString("title"));
+            System.out.println("Autor: " + bookResult.getString("author"));
+            System.out.println("Ilość stron: " + bookResult.getInt("pages"));
+            System.out.println("---------------------------------------");
+        }
+        bookResult.close();
+
+    }
+
+    private static void showRents(Connection connection)throws SQLException{
+
+        Statement statement = connection.createStatement();
+        ResultSet rentResult = statement.executeQuery("SELECT * FROM rent");
+        while (rentResult.next()) {
+            System.out.println("---------------------------------------");
+            System.out.println("Id: " + rentResult.getString("id"));
+            System.out.println("Id książki: " + rentResult.getString("book"));
+            System.out.println("Id użytkownika: " + rentResult.getString("user"));
+            System.out.println("Data wypożyczenia: " + rentResult.getDate("startRent"));
+            System.out.println("Dokładny czas wypożyczenia: " + rentResult.getTime("startRent"));
+
+            if (rentResult.getInt("endRent") == 0) {
+                System.out.println("Książka w trakcie wypożyczenia");
+            } else {
+                System.out.println("Data oddania: " + rentResult.getInt("endRent"));
+            }
+
+            System.out.println("Czas wypożyczeni (w dniach): " + rentResult.getInt("rentTime"));
+            System.out.println("---------------------------------------");
+        }
+        rentResult.close();
     }
 
 }

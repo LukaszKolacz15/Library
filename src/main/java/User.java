@@ -11,9 +11,10 @@ import java.util.regex.Pattern;
 /**
  * Created by Lukasz Kolacz on 20.04.2017.
  */
+
 public class User {
 
-    public static void addUser(Connection connection) throws SQLException {
+    static void addUser(Connection connection) throws SQLException {
 
 //        addUser(connection, "Łukasz", "Kołacz", "643 132 646");
 
@@ -23,14 +24,14 @@ public class User {
         System.out.println("Podaj Nazwisko: ");
         String lastName = scanner.nextLine();
 
-        String telephoneNumber = "";
+        String telephoneNumber = "0";
         Boolean status;
         do {
             System.out.println("Podaj numer telefonu: ");
             System.out.println("Przykładowy wzór: +48 000 000 000");
             telephoneNumber = scanner.nextLine();
 
-            Pattern tele = Pattern.compile("\\+[0-9]{2}(\\ [0-9]{3}){3}");
+            Pattern tele = Pattern.compile("\\+[0-9]{2}( [0-9]{3}){3}");
             Matcher telephone = tele.matcher(telephoneNumber);
             if (telephone.matches()) {
                 status = true;
@@ -51,7 +52,7 @@ public class User {
         System.out.println("Dodano użytkownika!");
     }
 
-    public static void showUsers(Connection connection) throws SQLException {
+    static void showUsers(Connection connection) throws SQLException {
 
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery("SELECT * FROM user");

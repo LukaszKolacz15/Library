@@ -9,9 +9,10 @@ import java.util.Scanner;
 /**
  * Created by Lukasz Kolacz on 20.04.2017.
  */
+
 public class Rent {
 
-    public static void addRent(Connection connection) throws SQLException {
+    static void addRent(Connection connection) throws SQLException {
 
         Scanner scanner = new Scanner(System.in);
 
@@ -35,7 +36,7 @@ public class Rent {
         System.out.println("Dodano wypożyczenie!");
     }
 
-    public static void showRents(Connection connection) throws SQLException {
+    static void showRents(Connection connection) throws SQLException {
 
         Statement statement = connection.createStatement();
         ResultSet rentResult = statement.executeQuery("SELECT * FROM rent");

@@ -11,7 +11,7 @@ import java.util.Scanner;
  */
 public class Book {
 
-    public static void addBook(Connection connection) throws SQLException {
+    static void addBook(Connection connection) throws SQLException {
 
         Scanner scanner = new Scanner(System.in);
 
@@ -34,7 +34,7 @@ public class Book {
         System.out.println("Dodano książkę!");
     }
 
-    public static void showBooks(Connection connection) throws SQLException {
+    static void showBooks(Connection connection) throws SQLException {
 
         Statement statement = connection.createStatement();
         ResultSet bookResult = statement.executeQuery("SELECT * FROM book");

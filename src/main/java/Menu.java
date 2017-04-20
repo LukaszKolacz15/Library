@@ -5,9 +5,7 @@ import java.util.Scanner;
  */
 public class Menu {
 
-    public static int showMenu() {
-
-
+    static int showMenu() {
 
         System.out.println(" ");
         System.out.println("--------- WITAMY W BIBLIOTECE ---------");

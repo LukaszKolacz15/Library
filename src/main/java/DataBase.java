@@ -15,7 +15,7 @@ public class DataBase {
     private static final String USERPW = "akademiakodu";
     private static final String DRIVER = "com.mysql.jdbc.Driver";
 
-    public static Connection baseConnection() {
+    static Connection baseConnection() {
 
         Connection connection = null;
 

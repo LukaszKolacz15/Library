@@ -5,10 +5,9 @@ import java.util.Scanner;
  */
 public class Menu {
 
-    public static int menu() {
+    public static int showMenu() {
 
-        Scanner scanner = new Scanner(System.in);
-        int numb = scanner.nextInt();
+
 
         System.out.println(" ");
         System.out.println("--------- WITAMY W BIBLIOTECE ---------");
@@ -22,6 +21,9 @@ public class Menu {
         System.out.println("7. Exit");
         System.out.println("---------------------------------------");
         System.out.println(" ");
+
+        Scanner scanner = new Scanner(System.in);
+        int numb = scanner.nextInt();
 
         return numb;
     }

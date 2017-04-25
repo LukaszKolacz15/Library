@@ -16,7 +16,8 @@ public class Menu {
         System.out.println("4. Wyświetl wszystkich użytkowników");
         System.out.println("5. Wyświetl wszystkie książki");
         System.out.println("6. Wyświetl wszystkie wypożyczenia");
-        System.out.println("7. Exit");
+        System.out.println("7. Oddaj książkę ");
+        System.out.println("8. Exit");
         System.out.println("---------------------------------------");
         System.out.println(" ");
 

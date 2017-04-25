@@ -5,10 +5,6 @@ import java.sql.SQLException;
  */
 
 
-// TODO: OBSŁUŻYĆ PARAMETR END RENT TIME
-// TODO: DODAĆ ROZSZERZENIE ZAPYTANIA WYŚWIETLANIA WYPOŻYCZEŃ
-
-
 public class Main {
 
 
@@ -65,6 +61,14 @@ public class Main {
                     break;
 
                 case 7:
+                    try {
+                        Rent.addEndRent(DataBase.baseConnection());
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+
+                case 8:
                     System.exit(0);
                     break;
             }

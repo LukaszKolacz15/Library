@@ -9,6 +9,7 @@ import java.util.Scanner;
 /**
  * Created by Lukasz Kolacz on 20.04.2017.
  */
+
 public class Book {
 
     static void addBook(Connection connection) throws SQLException {

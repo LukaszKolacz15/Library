@@ -58,6 +58,7 @@ public class Rent {
 
             System.out.println("Czas wypożyczeni (w dniach): " + rentResult.getInt("rentTime"));
             System.out.println("---------------------------------------");
+            System.out.println("Czas wyporzyczenia: " + rentResult.getDate("startRent").equals(rentResult.getDate("endRent")));
         }
         rentResult.close();
     }

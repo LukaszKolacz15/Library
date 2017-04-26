@@ -22,6 +22,7 @@ public class Menu {
         System.out.println(" ");
 
         Scanner scanner = new Scanner(System.in);
+        //TODO dodać przechwycenie InputMismatchException
         int numb = scanner.nextInt();
 
         return numb;
